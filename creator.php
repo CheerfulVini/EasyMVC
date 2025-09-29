@@ -22,10 +22,141 @@ class Creator {
             $this->ClassesControl();
             $this->classesView();
             $this->ClassesDao();
+            $this->buscaTabelas();
+            $this->criaIndex();
             $this->compactar();
             header("Location:index.php?msg=2");
         }
     }//fimConsytruct
+
+    function criaIndex(){
+        $nomeBanco = $_POST['banco'];
+        $tab1 = "";
+        $tab2 = "";
+        foreach ($this->tabelas as $tabela) {
+            $nomeTabela = array_values((array) $tabela)[0];
+            $tab1.="<li><a href='view/{$nomeTabela}.php'>Cadastro de {$nomeTabela}</a></li>\n";
+            $tab2.="<li><a href='view/Lista{$nomeTabela}.php'>Relatório de {$nomeTabela}</a></li>\n";
+        }
+        $conteudo = <<<EOT
+
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Sistema de {$nomeBanco}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Cabeçalho */
+        .cabecalho {
+            width: 100%;
+            height: 200px;
+            background-color: #2c3e50;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Menu principal */
+        .menu {
+            width: 100%;
+            height: 100px;
+            background-color: #34495e;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+        }
+
+        .menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 40px;
+        }
+
+        .menu li {
+            position: relative;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 10px;
+            display: block;
+        }
+
+        /* Submenu */
+        .menu li ul {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #2c3e50;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            min-width: 200px;
+        }
+
+        .menu li ul li a {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        /* Exibir submenu ao passar o mouse */
+        .menu li:hover ul {
+            display: block;
+        }
+
+        /* Conteúdo */
+        .conteudo {
+            min-height: calc(100vh - 300px); /* altura total - cabeçalho (200) - menu (100) */
+            padding: 20px;
+            background-color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+<div class="cabecalho">
+    Sistema de {$nomeBanco}
+</div>
+
+<div class="menu">
+    <ul>
+        <li>
+            <a href="index.php">Cadastros</a>
+            <ul>
+                {$tab1}
+            </ul>
+        </li>
+        <li>
+            <a href="https://ava.ifpr.edu.br/pluginfile.php/638357/mod_assign/intro/index.html#">Relatórios</a>
+            <ul>
+                {$tab2}
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="conteudo">
+    <h2>Bem-vindo!</h2>
+    <p>Esta é a área de conteúdo do sistema.</p>
+</div>
+
+
+</body></html>
+
+EOT;
+    file_put_contents("sistema/index.php", $conteudo);
+    }
     function criaDiretorios() {
         $dirs = [
             "sistema",
